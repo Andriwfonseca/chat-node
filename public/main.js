@@ -44,10 +44,22 @@ function addMessage(type, user, message) {
       chatListElement.innerHTML += `<li class="message-status">${message}</li>`;
       break;
     case 'message':
-      chatListElement.innerHTML += `<li class="message"><span class="me">${user}:</span> ${message}</li>`;
+      chatListElement.innerHTML += `<li class="message"><span>${user}:</span> ${message}</li>`;
       break;
   }
 }
+
+messageInput.addEventListener('keyup', (e) => {
+  if (e.key === 'Enter') {
+    const message = messageInput.value.trim();
+    messageInput.value = '';
+
+    if (message != "") {
+      socket.emit('send-message', message);
+      addMessage('message', username, message);
+    }
+  }
+});
 
 socket.on('join-room-response', (data) => {
   if (data.success) {
@@ -74,4 +86,8 @@ socket.on('list-update', (data) => {
   }
   userList = data.list;
   renderUserList();  
+});
+
+socket.on('new-message', (data) => {
+  addMessage('message', data.username, data.message);
 });

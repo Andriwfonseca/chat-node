@@ -46,4 +46,13 @@ io.on('connection', (socket) => {
       });
     });
   });
+
+  socket.on('send-message', (message) => {
+    let objectMessage = {
+      username: socket.username,
+      message: message
+    };
+
+    socket.broadcast.emit('new-message', objectMessage);
+  });
 });
