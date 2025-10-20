@@ -36,6 +36,19 @@ function renderUserList() {
   });
 }
 
+function addMessage(type, user, message) {
+  let chatListElement = document.querySelector('.chat-list');
+
+  switch (type) {
+    case 'status':
+      chatListElement.innerHTML += `<li class="message-status">${message}</li>`;
+      break;
+    case 'message':
+      chatListElement.innerHTML += `<li class="message"><span class="me">${user}:</span> ${message}</li>`;
+      break;
+  }
+}
+
 socket.on('join-room-response', (data) => {
   if (data.success) {
     userList = data.users;
@@ -45,11 +58,20 @@ socket.on('join-room-response', (data) => {
     chatPage.style.display = 'flex';
     messageInput.focus();
 
+    addMessage('status', null, `Conectado!`);
+
     renderUserList();
   }
 });
 
-socket.on('list-update', (data) => {  
+socket.on('list-update', (data) => {
+  if (data.joined) {
+    addMessage('status', null, `${data.joined} entrou na sala`);
+  }
+
+  if (data.left) {
+    addMessage('status', null, `${data.left} saiu da sala`);
+  }
   userList = data.list;
   renderUserList();  
 });
