@@ -44,9 +44,15 @@ function addMessage(type, user, message) {
       chatListElement.innerHTML += `<li class="message-status">${message}</li>`;
       break;
     case 'message':
-      chatListElement.innerHTML += `<li class="message"><span>${user}:</span> ${message}</li>`;
+      if (user == username) {
+        chatListElement.innerHTML += `<li class="message"><span class="me">${user}:</span> ${message}</li>`;
+      } else {
+        chatListElement.innerHTML += `<li class="message"><span>${user}:</span> ${message}</li>`;
+      }
       break;
   }
+
+  chatListElement.scrollTop = chatListElement.scrollHeight;
 }
 
 messageInput.addEventListener('keyup', (e) => {
@@ -91,3 +97,21 @@ socket.on('list-update', (data) => {
 socket.on('new-message', (data) => {
   addMessage('message', data.username, data.message);
 });
+
+socket.on('disconnect', () => {
+  addMessage('status', null, `Você foi desconectado da sala`);
+  userList = [];
+  renderUserList();
+});
+
+socket.on('reconnect_error', () => {
+  addMessage('status', null, `Erro ao reconectar à sala`);
+});
+
+socket.on('reconnect', () => {
+  addMessage('status', null, `Reconectado à sala`);
+
+  if (username) {
+    socket.emit('join-room-request', username);
+  }
+})
