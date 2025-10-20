@@ -103,15 +103,3 @@ socket.on('disconnect', () => {
   userList = [];
   renderUserList();
 });
-
-socket.on('reconnect_error', () => {
-  addMessage('status', null, `Erro ao reconectar à sala`);
-});
-
-socket.on('reconnect', () => {
-  addMessage('status', null, `Reconectado à sala`);
-
-  if (username) {
-    socket.emit('join-room-request', username);
-  }
-})
