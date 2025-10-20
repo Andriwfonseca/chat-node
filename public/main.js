@@ -11,6 +11,8 @@ const messageInput = document.getElementById('message');
 loginPage.style.display = 'flex';
 chatPage.style.display = 'none';
 
+loginInput.focus();
+
 loginInput.addEventListener('keyup', (e) => {
   if (e.key === 'Enter') {
    const name = loginInput.value.trim();
@@ -28,7 +30,7 @@ loginInput.addEventListener('keyup', (e) => {
 function renderUserList() {
   const userListElement = document.querySelector('.user-list');
   userListElement.innerHTML = '';
-  
+
   userList.forEach(user => {
     userListElement.innerHTML += `<li>${user}</li>`;
   });
@@ -45,4 +47,9 @@ socket.on('join-room-response', (data) => {
 
     renderUserList();
   }
+});
+
+socket.on('list-update', (data) => {  
+  userList = data.list;
+  renderUserList();  
 });

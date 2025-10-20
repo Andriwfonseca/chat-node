@@ -13,7 +13,7 @@ server.listen(3000, () => {
     console.log('Server is running on port 3000');
 });
 
-const connectedUsers = [];
+let connectedUsers = [];
 
 io.on('connection', (socket) => {
   console.log('Um usuário se conectou: ', socket.id);
@@ -29,6 +29,21 @@ io.on('connection', (socket) => {
     socket.emit('join-room-response', {
       success: true,
       users: connectedUsers
+    });
+
+    socket.broadcast.emit('list-update', {
+      joined: username,
+      list: connectedUsers
+    });
+
+    socket.on('disconnect', () => {
+      connectedUsers = connectedUsers.filter(user => user != username);
+      console.log('Usuários conectados: ', connectedUsers);
+
+      socket.broadcast.emit('list-update', {
+        left: username,
+        list: connectedUsers
+      });
     });
   });
 });
