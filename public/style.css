@@ -20,7 +20,7 @@ ul, li {
 
 #login-page {
   background-color: #f0f0f0;
-  display: none;
+  display: flex;
 }
 
 #username {
@@ -36,7 +36,7 @@ ul, li {
 }
 
 #chat-page {
-  display: flex;
+  display: none;
 }
 
 .chat-area {
